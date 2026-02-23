@@ -7,6 +7,9 @@
 
 using color = vec3;
 
+/* writes color rgb (0.0-1.0) to out as [0,255]
+*
+*/
 void write_color(std::ostream& out, const color& pixel_color) {
     auto r = pixel_color.x();
     auto g = pixel_color.y();
