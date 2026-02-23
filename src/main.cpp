@@ -1,24 +1,17 @@
-#include <iostream>
-#include "vec3.h"
-#include "color.h"
-#include "ray.h"
+#include "rtweekend.h"
+
+#include "hittable.h"
+#include "hittable_list.h"
+#include "sphere.h"
+
+#include <chrono>
 
 
-bool hit_sphere(const point3& center, double radius, const ray& r) {
-    vec3 oc = center - r.origin();
-    auto a = dot(r.direction(), r.direction());
-    auto b = -2.0 * dot(r.direction(), oc);
-    auto c = dot(oc, oc) - radius*radius;
-    auto discriminant = b*b - 4*a*c;
-    
-    return (discriminant >= 0);
-}
-
-
-color ray_color(const ray& r) {
-
-    if (hit_sphere(point3(0,0,-1), 0.5, r))
-        return color(1, 0, 0);
+color ray_color(const ray& r, const hittable& world) {
+    hit_record rec;
+    if (world.hit(r, interval(0, infinity), rec)) {
+        return 0.5 * (rec.normal + color(1,1,1));
+    }
 
     vec3 unit_direction = unit_vector(r.direction());
     auto a = 0.5*(unit_direction.y() + 1.0);
@@ -27,8 +20,8 @@ color ray_color(const ray& r) {
 
 
 int main() {
-    // Image 
-
+    auto start = std::chrono::steady_clock::now();
+    // Image  ==================================================================================
     auto aspect_ratio = 16.0 / 9.0;
     int image_width = 800;
 
@@ -36,7 +29,15 @@ int main() {
     int image_height = int(image_width / aspect_ratio);
     image_height = (image_height < 1) ? 1 : image_height;
 
-    // Camera
+    // World  ==================================================================================
+    hittable_list world;
+
+    world.add(make_shared<sphere>(point3(1,0,-1), 0.2));
+    world.add(make_shared<sphere>(point3(0,0,-1), 0.5));    //middle sphere
+    world.add(make_shared<sphere>(point3(0,-100.5,-1), 100)); //ground
+
+
+    // Camera ==================================================================================
     auto focal_length = 1.0;
     auto viewport_height = 2.0;
     auto viewport_width = viewport_height * (double(image_width)/image_height);
@@ -54,8 +55,7 @@ int main() {
     auto viewport_upper_left = camera_center - vec3(0, 0, focal_length) - viewport_u/2 - viewport_v/2;
     auto pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
-    // Render
-
+    // Render ==================================================================================
     std::cout << "P3\n" << image_width << " " << image_height << "\n255" << std::endl;
 
     // for (int j = image_height - 1; j >= 0; --j) {
@@ -66,9 +66,14 @@ int main() {
             auto ray_direction = pixel_center - camera_center;
             ray r(camera_center, ray_direction);
 
-            color pixel_color = ray_color(r);
+            color pixel_color = ray_color(r, world);
             write_color(std::cout, pixel_color);
         }
     }
     std::clog << "\rDone.                 " << std::endl;
+
+
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::clog << "Execution time: " << duration.count() << " microseconds" << std::endl;
 }
