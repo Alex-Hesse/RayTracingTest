@@ -1,4 +1,13 @@
 #include <iostream>
+#include "vec3.h"
+#include "color.h"
+
+
+
+void firstPPM(int image_width, int image_height, int i, int j) {
+    auto pixel_color = color(double(i)/(image_width-1), double(j)/(image_height-1), 0.5);
+    write_color(std::cout, pixel_color);
+}
 
 int main() {
     // Image 
@@ -11,12 +20,10 @@ int main() {
     std::cout << "P3\n" << image_width << " " << image_height << "\n255" << std::endl;
 
     for (int j = image_height - 1; j >= 0; --j) {
+        std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
         for (int i = 0; i < image_width; ++i) {
-            int r = static_cast<int>(255.999 * i / (image_width - 1));
-            int g = static_cast<int>(255.999 * j / (image_height - 1));
-            int b = 128;
-            std::cout << r << ' ' << g << ' ' << b << '\n';
+            firstPPM(image_width, image_height, i, j);
         }
     }
-
+    std::clog << "\rDone.                 " << std::endl;
 }
