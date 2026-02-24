@@ -10,13 +10,7 @@ using color = vec3;
 
 /* gamma correction
 */
-inline double linear_to_gamma(double linear_component)
-{
-    if (linear_component > 0)
-        return std::sqrt(linear_component);
-
-    return 0;
-}
+inline double linear_to_gamma(double linear_component) { return (linear_component > 0) ? std::sqrt(linear_component) : 0; }
 
 /* writes color rgb (0.0-1.0) to out as [0,255]
 *
