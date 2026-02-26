@@ -12,6 +12,26 @@ class material {
         }
 };
 
+class basic : public material {
+    public:
+        basic(const color& albedo) : albedo{albedo} {}
+
+        bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override {
+            vec3 scatter_direction = random_on_hemisphere(rec.normal); //super basic reflection
+            
+            // Catch degenerate scatter direction
+            if (scatter_direction.near_zero())
+                scatter_direction = rec.normal;
+
+            scattered = ray(rec.p, scatter_direction);
+            attenuation = albedo;
+            return true;
+        }
+
+    private:
+        color albedo;
+};
+
 
 class lambertian : public material {
     public:
@@ -53,8 +73,9 @@ class metal : public material {
 
 class dielectric : public material {
     public:
-        dielectric(double refraction_index) : refraction_index(refraction_index) {}
-
+    dielectric(double refraction_index) : refraction_index(refraction_index) {}
+    
+    // using snells law
         bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override {
             attenuation = color{1.0, 1.0, 1.0};
             double ri {rec.front_face ? (1.0/refraction_index) : refraction_index};
