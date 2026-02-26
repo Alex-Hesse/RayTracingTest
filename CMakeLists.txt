@@ -24,7 +24,7 @@ target_sources(${PROJECT_NAME}
     src/main.cpp
 )
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 
 target_compile_options(${PROJECT_NAME} PRIVATE
@@ -34,5 +34,5 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4)
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra )
 endif()

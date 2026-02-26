@@ -8,8 +8,7 @@
 #include "cube.h"
 
 #include <chrono>
-
-
+#include <iomanip>
 
 
 void finalRenderCover(hittable_list &world, camera &cam) {
@@ -54,7 +53,7 @@ void finalRenderCover(hittable_list &world, camera &cam) {
     world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1200;
+    cam.image_width       = 1920;
     cam.samples_per_pixel = 500;
     cam.max_depth         = 50;
 
@@ -117,10 +116,18 @@ int main() {
 
     auto end {std::chrono::steady_clock::now()};
     auto duration {std::chrono::duration_cast<std::chrono::milliseconds>(end - start)};
-    if (duration.count() < 60000)
+    if (duration.count() < 60)
         std::clog << "Execution time: " << duration.count() << " milliseconds" << std::endl;
     else {
-        duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-        std::clog << "Execution time: " << duration.count() << " seconds" << std::endl;
+        auto total_seconds {std::chrono::duration_cast<std::chrono::seconds>(end - start)};
+
+        auto h = std::chrono::duration_cast<std::chrono::hours>(total_seconds);
+        auto m = std::chrono::duration_cast<std::chrono::minutes>(total_seconds % std::chrono::hours(1));
+        auto s = std::chrono::duration_cast<std::chrono::seconds>(total_seconds % std::chrono::minutes(1));
+
+        std::clog << "Execution time: "
+                << std::setfill('0') << std::setw(2) << h.count() << ":"
+                << std::setfill('0') << std::setw(2) << m.count() << ":"
+                << std::setfill('0') << std::setw(2) << s.count() << " (hh:mm:ss)" <<std::endl;
     }
 }
