@@ -27,17 +27,27 @@ void finalRenderCover(hittable_list &world, camera &cam) {
                     // diffuse
                     auto albedo = color::random() * color::random();
                     sphere_material = std::make_shared<lambertian>(albedo);
-                    world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                    //auto center2 = center + vec3(0, random_double(0,.5), 0);
+                    if (random_double(0,1) > 0.5)
+                        world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                    else
+                        world.add(std::make_shared<cube >(center, 0.4, sphere_material));
                 } else if (choose_mat < 0.95) {
                     // metal
                     auto albedo = color::random(0.5, 1);
                     auto fuzz = random_double(0, 0.5);
                     sphere_material = std::make_shared<metal>(albedo, fuzz);
-                    world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                    if (random_double(0,1) > 0.5)
+                        world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                    else
+                        world.add(std::make_shared<cube >(center, 0.4, sphere_material));
                 } else {
                     // glass
                     sphere_material = std::make_shared<dielectric>(1.5);
-                    world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                   if (random_double(0,1) > 0.5)
+                        world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                    else
+                        world.add(std::make_shared<cube >(center, 0.4, sphere_material));
                 }
             }
         }
@@ -53,8 +63,8 @@ void finalRenderCover(hittable_list &world, camera &cam) {
     world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1920;
-    cam.samples_per_pixel = 500;
+    cam.image_width       = 480;
+    cam.samples_per_pixel = 100;
     cam.max_depth         = 50;
 
     cam.vfov     = 20;
@@ -115,19 +125,16 @@ int main() {
     cam.render(world);
 
     auto end {std::chrono::steady_clock::now()};
-    auto duration {std::chrono::duration_cast<std::chrono::milliseconds>(end - start)};
-    if (duration.count() < 60)
-        std::clog << "Execution time: " << duration.count() << " milliseconds" << std::endl;
-    else {
-        auto total_seconds {std::chrono::duration_cast<std::chrono::seconds>(end - start)};
+    auto total_seconds {std::chrono::duration_cast<std::chrono::milliseconds>(end - start)};
 
-        auto h = std::chrono::duration_cast<std::chrono::hours>(total_seconds);
-        auto m = std::chrono::duration_cast<std::chrono::minutes>(total_seconds % std::chrono::hours(1));
-        auto s = std::chrono::duration_cast<std::chrono::seconds>(total_seconds % std::chrono::minutes(1));
+    auto h  = std::chrono::duration_cast<std::chrono::hours>(total_seconds);
+    auto m  = std::chrono::duration_cast<std::chrono::minutes>(total_seconds % std::chrono::hours(1));
+    auto s  = std::chrono::duration_cast<std::chrono::seconds>(total_seconds % std::chrono::minutes(1));
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(total_seconds % std::chrono::seconds(1));
 
-        std::clog << "Execution time: "
-                << std::setfill('0') << std::setw(2) << h.count() << ":"
-                << std::setfill('0') << std::setw(2) << m.count() << ":"
-                << std::setfill('0') << std::setw(2) << s.count() << " (hh:mm:ss)" <<std::endl;
-    }
+    std::clog << "Execution time: "
+            << std::setfill('0') << std::setw(2) << h.count() << ":"
+            << std::setfill('0') << std::setw(2) << m.count() << ":"
+            << std::setfill('0') << std::setw(2) << s.count() << "."
+            << std::setfill('0') << std::setw(3) << ms.count() << " (hh:mm:ss.ms)" <<std::endl;
 }
