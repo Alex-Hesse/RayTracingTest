@@ -16,6 +16,7 @@ class cube : public hittable {
             maxX = center.x() + halfEdgeL;
             maxY = center.y() + halfEdgeL;
             maxZ = center.z() + halfEdgeL;
+            bbox = aabb{point3{minX, minY, minZ}, point3{maxX,maxY,maxZ}};
         }
 
         bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
@@ -28,7 +29,8 @@ class cube : public hittable {
             // X slab
             if (std::abs(r.direction().x()) < EPS) {
                 if (r.origin().x() < minX || r.origin().x() > maxX) return false;
-                tx1 = -INF; tx2 = INF;
+                tx1 = -INF; 
+                tx2 = INF;
             } else {
                 double inv {1.0 / r.direction().x()};
                 tx1 = (minX - r.origin().x()) * inv;
@@ -38,7 +40,8 @@ class cube : public hittable {
             // Y slab
             if (std::abs(r.direction().y()) < EPS) {
                 if (r.origin().y() < minY || r.origin().y() > maxY) return false;
-                ty1 = -INF; ty2 = INF;
+                ty1 = -INF;
+                ty2 = INF;
             } else {
                 double inv {1.0 / r.direction().y()};
                 ty1 = (minY - r.origin().y()) * inv;
@@ -116,6 +119,8 @@ class cube : public hittable {
             return true;
         }
 
+        aabb bounding_box() const override { return bbox; }
+
     private:
         point3 center;
         double edgeL;
@@ -126,6 +131,8 @@ class cube : public hittable {
         double maxX;
         double maxY;
         double maxZ;
+
+        aabb bbox;
 
         std::shared_ptr<material> mat;
 };

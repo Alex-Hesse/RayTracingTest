@@ -32,7 +32,7 @@ class aabb {
         const point3& ray_orig {r.origin()};
         const vec3&   ray_dir  {r.direction()};
 
-        for (int axis = 0; axis < 3; axis++) {
+        for (int axis {0}; axis < 3; axis++) {
             const interval& ax {axis_interval(axis)};
             const double adinv {1.0 / ray_dir[axis]};
 
@@ -52,6 +52,19 @@ class aabb {
         }
         return true;
     }
+
+    int longest_axis() const {
+        // Returns the index of the longest axis of the bounding box.
+        if (x.size() > y.size())
+            return x.size() > z.size() ? 0 : 2;
+        else
+            return y.size() > z.size() ? 1 : 2;
+    }
+
+    static const aabb empty, universe;
 };
+
+const aabb aabb::empty    = aabb{interval::empty,    interval::empty,    interval::empty};
+const aabb aabb::universe = aabb{interval::universe, interval::universe, interval::universe};
 
 #endif

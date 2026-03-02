@@ -16,9 +16,9 @@ inline double linear_to_gamma(double linear_component) { return (linear_componen
 *
 */
 void write_color(std::ostream& out, const color& pixel_color) {
-    auto r {pixel_color.x()};
-    auto g {pixel_color.y()};
-    auto b {pixel_color.z()};
+    double r {pixel_color.x()};
+    double g {pixel_color.y()};
+    double b {pixel_color.z()};
 
     // Apply a linear to gamma transform for gamma 2
     r = linear_to_gamma(r);

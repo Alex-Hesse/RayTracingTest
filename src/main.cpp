@@ -1,5 +1,6 @@
 #include "rtweekend.h"
 
+#include "bvh.h"
 #include "camera.h"
 #include "hittable.h"
 #include "hittable_list.h"
@@ -114,13 +115,15 @@ int main() {
     auto start {std::chrono::steady_clock::now()};
    
     // World  ==================================================================================
-    hittable_list world;
+    hittable_list world {};
 
     
     // Cam =====================================================================================
     camera cam{};
 
     finalRenderCover(world, cam);
+
+    world = hittable_list(std::make_shared<bvh_node>(world));
 
     cam.render(world);
 
