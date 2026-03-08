@@ -13,7 +13,8 @@
 
 
 void finalRenderCover(hittable_list &world, camera &cam) {
-    auto ground_material = std::make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    //auto ground_material = std::make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    auto ground_material = std::make_shared<metal>(color(0.922, 0.957, 0.980), 0.0);
     world.add(std::make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
 
     for (int a = -11; a < 11; a++) {
@@ -56,17 +57,21 @@ void finalRenderCover(hittable_list &world, camera &cam) {
 
     auto material1 = std::make_shared<dielectric>(1.5);
     world.add(std::make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
+    world.add(std::make_shared<cube  >(point3(0, 1, 0), 2.0, material1));
 
     auto material2 = std::make_shared<lambertian>(color(0.4, 0.2, 0.1));
     world.add(std::make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
-
+    auto material4 = std::make_shared<lambertian>(color(0.4, 0.2, 0.4));
+    world.add(std::make_shared<cube  >(point3(-8, 1, 0), 2.0, material4));
+    
     auto material3 = std::make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
     world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
+    world.add(std::make_shared<cube  >(point3(10.5, 1.25, 0), 2.5, material3));
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1920;
-    cam.samples_per_pixel = 500;
-    cam.max_depth         = 100;
+    cam.image_width       = 1080;
+    cam.samples_per_pixel = 200;
+    cam.max_depth         = 50;
 
     cam.vfov     = 20;
     cam.lookfrom = point3(13,2,3);
