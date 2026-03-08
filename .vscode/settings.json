@@ -3,17 +3,24 @@
         "aabb",
         "adinv",
         "Defocus",
+        "eamodio",
         "etai",
         "etat",
+        "ffast",
         "gbyte",
         "lambertian",
         "lensq",
+        "libtbb",
         "lookat",
+        "MSVC",
         "rbyte",
+        "rocm",
         "RTWEEKEND",
+        "rvec",
         "Schlick's",
         "snells",
         "sqrtd",
-        "vfov"
+        "vfov",
+        "Wextra"
     ]
 }

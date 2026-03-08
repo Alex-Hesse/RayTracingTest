@@ -1,6 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <vector>
+#include <algorithm>
+#include <execution>
+
 #include "hittable.h"
 #include "material.h"
 
@@ -38,6 +42,34 @@ class camera {
 
             std::clog << "\rDone.                 \n";
         }
+
+        void renderParallel(const hittable& world) {
+
+            initialize();
+
+            std::vector<color> image_data(image_width * image_height);
+            std::vector<int> rows(image_height);
+            std::iota(rows.begin(), rows.end(), 0); // Fills 0, 1, 2...
+            
+            std::for_each(std::execution::par, rows.begin(), rows.end(), [&](int j) {
+                for (int i = 0; i < image_width; i++) {
+                    color pixel_color(0,0,0);
+                    for (int s = 0; s < samples_per_pixel; s++) {
+                        ray r {get_ray(i, j)};
+                        pixel_color += ray_color(r, max_depth, world);
+                    }
+                    image_data[j * image_width + i] = pixel_samples_scale * pixel_color;
+                }
+            });
+            
+            // 3. Write to file at the very end (Serial)
+            std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+            for (const auto& c : image_data) 
+                write_color(std::cout, c);
+
+            std::clog << "\rDone.                 \n";
+        }
+
     private:
         int    image_height;        // Rendered image height
         double pixel_samples_scale; // Color scale factor for a sum of pixel samples

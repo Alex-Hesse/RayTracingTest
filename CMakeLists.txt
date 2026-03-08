@@ -12,6 +12,8 @@ project(${PROJECT_NAME}
   VERSION 1.0
     LANGUAGES CXX)
 
+find_package(TBB REQUIRED)
+
 add_executable(${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
@@ -36,3 +38,5 @@ if (MSVC)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra )
 endif()
+
+target_link_libraries(${PROJECT_NAME} TBB::tbb)
